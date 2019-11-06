@@ -64,19 +64,19 @@ func (p *proxy) invokeGrpc(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	accept := request.Header.Get("accept")
-	if accept == "" {
-		accept = "application/octet-stream"
-	}
 	contentType := request.Header.Get("content-type")
 	if contentType == "" {
 		contentType = "application/octet-stream"
 	}
 
+	var expectedContentTypes []string
+	if accept := request.Header.Get("accept"); accept != "" {
+		expectedContentTypes = []string{accept}
+	}
 	startSignal := rpc.InputSignal{
 		Frame: &rpc.InputSignal_Start{
 			Start: &rpc.StartFrame{
-				ExpectedContentTypes: []string{accept},
+				ExpectedContentTypes: expectedContentTypes,
 			},
 		},
 	}
