@@ -87,10 +87,6 @@ func (p *proxy) invokeGrpc(writer http.ResponseWriter, request *http.Request) {
 	if accept == "" {
 		accept = "*/*"
 	}
-	contentType := request.Header.Get("content-type")
-	if contentType == "" {
-		contentType = "application/octet-stream"
-	}
 
 	startSignal := rpc.InputSignal{
 		Frame: &rpc.InputSignal_Start{
@@ -110,6 +106,10 @@ func (p *proxy) invokeGrpc(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		writeError(writer, err)
 		return
+	}
+	contentType := request.Header.Get("content-type")
+	if contentType == "" {
+		contentType = "application/octet-stream"
 	}
 	inputFrame := rpc.InputFrame{
 		ContentType: contentType,
